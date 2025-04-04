@@ -1,0 +1,44 @@
+# Unity generated folders and files
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+UserSettings/
+MemoryCaptures/
+
+# Rider / VS Code / Visual Studio
+.idea/
+.vscode/
+.vs/
+*.csproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Crash logs
+*.stacktrace
+
+# Unity Asset Store tools
+[Aa]ssets/AssetStoreTools*
+
+# Git files you don’t want to track
+*.swp
+*.tmp
+
+# Packages cache (especially Burst-related files that are huge)
+**/Library/PackageCache/
+
+# Ignore JetBrains Rider logs
+.idea/
+Library/
