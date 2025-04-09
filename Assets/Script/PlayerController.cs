@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -8,14 +9,30 @@ public class PlayerController : MonoBehaviour
     public SpriteRenderer spriteRenderer;
     public GameObject InteractIcon;
     private Vector2 boxsize = new Vector2(0.1f, 1f);
-
+    public Vector2 startPosition = new Vector2(-33.2f, -3.8f);
     private Vector2 movement;
     private bool isAttacking = false;
     private bool isDying = false;
 
     public void Start()
     {
-        DontDestroyOnLoad(gameObject);
+        int isNewGame = PlayerPrefs.GetInt("IsNewGame", 1);
+
+        if (isNewGame == 1)
+        {
+           
+            transform.position = startPosition;
+            
+        }
+        else
+        {
+            
+            LoadPlayerPosition();
+        }
+
+      
+        PlayerPrefs.SetInt("IsNewGame", 0);
+        PlayerPrefs.Save();
     }
     void Update()
     {
@@ -98,6 +115,7 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+   
     public void Die()
     {
         if (!isDying)
@@ -110,6 +128,32 @@ public class PlayerController : MonoBehaviour
 
            
             Destroy(gameObject, 2f); 
+        }
+    }
+    public void LoadPlayerPosition()
+    {
+        float x = PlayerPrefs.GetFloat("PlayerPosX", transform.position.x);
+        float y = PlayerPrefs.GetFloat("PlayerPosY", transform.position.y);
+        transform.position = new Vector3(x, y, 0f);
+    }
+    public void SavePlayerPosition()
+    {
+        PlayerPrefs.SetFloat("PlayerPosX", transform.position.x);
+        PlayerPrefs.SetFloat("PlayerPosY", transform.position.y);
+        PlayerPrefs.Save();
+    }
+
+   
+    void Awake()
+    {
+        var players = GameObject.FindGameObjectsWithTag("Player");
+        if (players.Length > 1)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            DontDestroyOnLoad(gameObject);
         }
     }
 }

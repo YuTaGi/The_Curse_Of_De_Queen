@@ -1,16 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class InteractionSystem : MonoBehaviour
 {
     [Header("Detection Parameters")]
     public Transform detectionPoint;
-    private const float detectionRadius = 0.2f;
+    private const float detectionRadius = 2.0f;
     public LayerMask detectionLayer;
     public GameObject detectedObjects;
-    
-   
+
+    public GameObject examineWindow;
+    public Image examineImage;
+    public Text examineText;
 
     void Update()
     {
@@ -55,5 +59,11 @@ public class InteractionSystem : MonoBehaviour
        FindObjectOfType<InventorySystem>().PickUp(item);  
     }
    
-   
+   public void Examine(Item item)
+    {
+        Debug.Log("Examining item: " + item.name);
+        examineImage.sprite = item.GetComponent<SpriteRenderer>().sprite;
+        examineText.text = item.descriptionText;
+        examineWindow.SetActive(true);
+    }
 }

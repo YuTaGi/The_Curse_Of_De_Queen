@@ -9,11 +9,17 @@ public class Item : MonoBehaviour
 {
     public enum InteractionTypr { NONE, PickUp, Examine }
     public InteractionTypr type;
+
+    public string descriptionText;
+  
+    private InventorySystem inventory;
+    
     private void Reset()
     {
         GetComponent<Collider2D>().isTrigger = true;
         gameObject.layer = 10;
     }
+   
 
     public void Interact()
     {
@@ -24,7 +30,7 @@ public class Item : MonoBehaviour
                 gameObject.SetActive(false);
                 break;
             case InteractionTypr.Examine:
-                Debug.Log("LOOK");
+                FindObjectOfType<InteractionSystem>().Examine(this);
                 break;
             default:
                 break;

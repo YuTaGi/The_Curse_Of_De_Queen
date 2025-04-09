@@ -5,15 +5,25 @@ using UnityEngine.SceneManagement;
 
 public class Scenemanager : MonoBehaviour
 {
+
+    [Header("Scene Settings")]
     public string sceneName;
     private bool canChangeScene = false;
 
+    [Header("UI")]
+    public GameObject interactIcon;
+
+    void Start()
+    {
+        if (interactIcon != null)
+            interactIcon.SetActive(false);
+    }
+
     void Update()
     {
-      
         if (canChangeScene && Input.GetKeyDown(KeyCode.E))
         {
-            GotoScene();
+            ChangeScene();
         }
     }
 
@@ -22,6 +32,8 @@ public class Scenemanager : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             canChangeScene = true;
+            if (interactIcon != null)
+                interactIcon.SetActive(true);
         }
     }
 
@@ -30,18 +42,25 @@ public class Scenemanager : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             canChangeScene = false;
+            if (interactIcon != null)
+                interactIcon.SetActive(false);
         }
     }
 
-    private void GotoScene()
+    private void ChangeScene()
     {
-        if (!string.IsNullOrEmpty(sceneName))
+       
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
         {
-            SceneManager.LoadScene(sceneName);
+            PlayerController playerController = player.GetComponent<PlayerController>();
+            if (playerController != null)
+            {
+                playerController.SavePlayerPosition();
+            }
         }
-        else
-        {
-            Debug.LogError("Scene name is not set.");
-        }
+
+        SceneManager.LoadScene(sceneName);
     }
 }
+

@@ -13,8 +13,9 @@ public class CardController : MonoBehaviour
     private List<Sprite> spritePairs;
     private Card firstSelected;
     private Card secondSelected;
-    private int matchedPairs = 4;
+    private int matchedPairs = 0;
     public string sceneName;
+   
 
     private void Start()
     {

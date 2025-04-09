@@ -9,6 +9,19 @@ public class Roommanager : MonoBehaviour
     public string requiredItem = "Key";
     private bool isPlayerInRange = false;
 
+    public void SavePlayerPosition()
+    {
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            Vector3 pos = player.transform.position;
+            PlayerPrefs.SetFloat("PlayerPosX", pos.x);
+            PlayerPrefs.SetFloat("PlayerPosY", pos.y);
+            PlayerPrefs.Save();
+        }
+    }
+
+
     private void OnTriggerEnter2D(Collider2D other)
     {
        
@@ -47,6 +60,7 @@ public class Roommanager : MonoBehaviour
            
             if (playerInventory.HasItem(requiredItem))
             {
+                SavePlayerPosition();
                 Debug.Log("Player has " + requiredItem);
                 SceneManager.LoadScene(scene);
             }
@@ -66,4 +80,5 @@ public class Roommanager : MonoBehaviour
             player.transform.position = new Vector2(-7, 0);
         }
     }
+
 }
