@@ -6,55 +6,29 @@ using UnityEngine.UI;
 
 public class CollectItem : MonoBehaviour
 {
+    public static CollectItem instance;
+    private HashSet<string> collectedItems = new HashSet<string>();
 
-    private bool interactionAllowed;
-    private Interactable interactableObject;
-
-    void Update()
+    private void Awake()
     {
-        if (interactionAllowed && Input.GetKeyDown(KeyCode.E))
+        if (instance == null)
         {
-            IInteract();
-        }
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Player"))
-        {
-            interactionAllowed = true;
-        }
-
-        
-        interactableObject = collision.GetComponent<Interactable>();
-    }
-
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Player"))
-        {
-            interactionAllowed = false;
-        }
-
-        interactableObject = null;
-    }
-
-    private void IInteract()
-    {
-        if (interactableObject != null)
-        {
-            interactableObject.Interact();
+            instance = this;
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
-            PickUp();
+            Destroy(gameObject);
         }
     }
 
-    private void PickUp()
+    public bool IsCollected(string id)
     {
-        Destroy(gameObject);
-        Debug.Log("PickUp Success");
+        return collectedItems.Contains(id);
     }
-    
+
+    public void MarkCollected(string id)
+    {
+        collectedItems.Add(id);
+    }
 }

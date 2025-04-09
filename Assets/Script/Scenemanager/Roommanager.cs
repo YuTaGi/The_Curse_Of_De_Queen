@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -8,6 +9,9 @@ public class Roommanager : MonoBehaviour
     public string scene;
     public string requiredItem = "Key";
     private bool isPlayerInRange = false;
+    public GameObject missingItemPopup;
+    public float popupDuration = 2f;
+    public TextMeshProUGUI missingItemText;
 
     public void SavePlayerPosition()
     {
@@ -57,28 +61,39 @@ public class Roommanager : MonoBehaviour
 
         if (playerInventory != null)
         {
-           
+
             if (playerInventory.HasItem(requiredItem))
             {
+                playerInventory.RemoveItem(requiredItem);
                 SavePlayerPosition();
-                Debug.Log("Player has " + requiredItem);
+                Debug.Log("Used item: " + requiredItem);
                 SceneManager.LoadScene(scene);
             }
             else
             {
                 Debug.Log("Player needs " + requiredItem);
+                ShowMissingItemPopup();
             }
         }
     }
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+   
+    public void ShowMissingItemPopup()
     {
-       
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null)
-        {
+        if (missingItemPopup == null) return;
 
-            player.transform.position = new Vector2(-7, 0);
+        if (missingItemText != null)
+        {
+            missingItemText.text = "You need a " + requiredItem + "!";
         }
+
+        missingItemPopup.SetActive(true);
+        CancelInvoke(nameof(HideMissingItemPopup));
+        Invoke(nameof(HideMissingItemPopup), popupDuration);
+    }
+
+    void HideMissingItemPopup()
+    {
+        missingItemPopup.SetActive(false);
     }
 
 }

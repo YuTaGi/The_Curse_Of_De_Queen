@@ -31,10 +31,6 @@ public class Gamemenager : MonoBehaviour
         currentMatches++;
         score++;
 
-        if (currentMatches >= totalMatches)
-        {
-            SceneManager.LoadScene(sceneName);
-
-        }
+        
     }
 }

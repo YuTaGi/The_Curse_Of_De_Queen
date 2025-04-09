@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 using static UnityEditor.Progress;
 
 [RequireComponent(typeof(BoxCollider2D))]
@@ -10,10 +11,20 @@ public class Item : MonoBehaviour
     public enum InteractionTypr { NONE, PickUp, Examine }
     public InteractionTypr type;
 
+    public string itemID;
     public string descriptionText;
-  
-    private InventorySystem inventory;
-    
+    public UnityEvent customEvent;
+
+    private void Start()
+    {
+        if (!string.IsNullOrEmpty(itemID) && CollectItem.instance != null)
+        {
+            if (CollectItem.instance.IsCollected(itemID))
+            {
+                gameObject.SetActive(false);
+            }
+        }
+    }
     private void Reset()
     {
         GetComponent<Collider2D>().isTrigger = true;
@@ -27,6 +38,10 @@ public class Item : MonoBehaviour
         {
             case InteractionTypr.PickUp:
                 FindObjectOfType<InteractionSystem>().PickUpItem(gameObject);
+                if (!string.IsNullOrEmpty(itemID))
+                {
+                    CollectItem.instance.MarkCollected(itemID);
+                }
                 gameObject.SetActive(false);
                 break;
             case InteractionTypr.Examine:

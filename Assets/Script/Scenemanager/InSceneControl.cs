@@ -11,9 +11,15 @@ public class InSceneControl : MonoBehaviour
 
     private void Awake()
     {
-        if(instance == null)
+        if (instance == null)
         {
             instance = this;
+            DontDestroyOnLoad(gameObject);
+
+            if (Fader != null)
+            {
+                DontDestroyOnLoad(Fader.gameObject);
+            }
         }
         else
         {
@@ -22,11 +28,27 @@ public class InSceneControl : MonoBehaviour
     }
     private void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player");
+        StartCoroutine(FindPlayerWhenSceneLoads());
+    }
+
+    IEnumerator FindPlayerWhenSceneLoads()
+    {
+        while (player == null)
+        {
+            player = GameObject.FindGameObjectWithTag("Player");
+            yield return null;
+        }
     }
     public static void TransitionPlayer(Vector3 pos)
     {
-        instance.StartCoroutine(instance.Transition(pos));
+        if (instance != null && instance.gameObject != null)
+        {
+            instance.StartCoroutine(instance.Transition(pos));
+        }
+        else
+        {
+            Debug.LogWarning("NOTHING");
+        }
     }
    private IEnumerator Transition(Vector3 pos)
     {

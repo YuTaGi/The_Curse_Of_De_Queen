@@ -11,11 +11,13 @@ public class InteractionSystem : MonoBehaviour
     private const float detectionRadius = 2.0f;
     public LayerMask detectionLayer;
     public GameObject detectedObjects;
-
+    [Header("Examine")]
     public GameObject examineWindow;
     public Image examineImage;
-    public Text examineText;
+    public TextMeshProUGUI examineText;
+    public TextMeshProUGUI ItemNamae;
 
+    public bool isExamining;
     void Update()
     {
         if (DetectObject())
@@ -58,12 +60,22 @@ public class InteractionSystem : MonoBehaviour
     {
        FindObjectOfType<InventorySystem>().PickUp(item);  
     }
-   
-   public void Examine(Item item)
+
+    public void Examine(Item item)
     {
-        Debug.Log("Examining item: " + item.name);
-        examineImage.sprite = item.GetComponent<SpriteRenderer>().sprite;
-        examineText.text = item.descriptionText;
-        examineWindow.SetActive(true);
+        if (isExamining)
+        {
+            examineWindow.SetActive(false);
+            isExamining = false;
+        }
+        else
+        {
+            
+            examineImage.sprite = item.GetComponent<SpriteRenderer>().sprite;
+            ItemNamae.text = item.name;
+            examineText.text = item.descriptionText;
+            examineWindow.SetActive(true);
+            isExamining = true;
+        }
     }
 }
