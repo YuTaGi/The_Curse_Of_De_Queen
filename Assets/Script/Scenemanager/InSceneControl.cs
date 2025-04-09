@@ -14,12 +14,7 @@ public class InSceneControl : MonoBehaviour
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject);
-
-            if (Fader != null)
-            {
-                DontDestroyOnLoad(Fader.gameObject);
-            }
+            DontDestroyOnLoad(gameObject); 
         }
         else
         {

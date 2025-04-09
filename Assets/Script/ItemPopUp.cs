@@ -6,59 +6,25 @@ using TMPro;
 
 public class ItemPopUp : MonoBehaviour
 {
-    public static ItemPopUp Instance;
-    [Header("UI")]
     public GameObject rewardPopupUI;
-    public Text rewardText;
-    public Image rewardImage;
+    public TextMeshProUGUI rewardText; 
+    public Image itemImage;
 
-    [Header("Reward Database")]
-    public List<RewardData> allRewards;
-
-    private void Awake()
+    void Start()
     {
-        if (Instance == null) Instance = this;
-    }
-
-    private void Start()
-    {
-        CheckRewardFlag();
-    }
-
-    public void GiveReward(string rewardName)
-    {
-       
-        PlayerPrefs.SetString("RewardItem", rewardName);
-        PlayerPrefs.SetInt("ShowRewardAfterLoad", 1);
-        PlayerPrefs.Save();
-    }
-
-    private void CheckRewardFlag()
-    {
-        if (PlayerPrefs.GetInt("ShowRewardAfterLoad", 0) == 1)
+        if (PlayerPrefs.HasKey("RewardItem"))
         {
-            string rewardName = PlayerPrefs.GetString("RewardItem", "");
-            ShowPopup(rewardName);
-
-            PlayerPrefs.DeleteKey("ShowRewardAfterLoad");
+            string itemName = PlayerPrefs.GetString("RewardItem");
+            ShowPopup(itemName);
             PlayerPrefs.DeleteKey("RewardItem");
         }
     }
 
-    public void ShowPopup(string rewardName)
+    void ShowPopup(string itemName)
     {
         rewardPopupUI.SetActive(true);
-        rewardText.text = $"Got {rewardName}";
+        rewardText.text = $"You got {itemName}!";
 
-        ItemPopUp data = allRewards.Find(r => r.rewardName == rewardName);
-        if (data != null)
-        {
-            rewardImage.sprite = data.rewardIcon;
-        }
-        else
-        {
-            Debug.LogWarning("not found " + rewardName);
-        }
     }
 
     public void ClosePopup()
@@ -66,3 +32,4 @@ public class ItemPopUp : MonoBehaviour
         rewardPopupUI.SetActive(false);
     }
 }
+

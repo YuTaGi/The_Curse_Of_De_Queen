@@ -25,6 +25,7 @@ public class InventorySystem : MonoBehaviour
     public GameObject fullInventoryPopup;
     public float popupDuration = 2f;
 
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.I))
@@ -34,8 +35,6 @@ public class InventorySystem : MonoBehaviour
     }
     void ToggleInventory()
     {
-       
-
         isOpen = !isOpen;
         ui_Window.SetActive(isOpen);
     }
@@ -50,8 +49,21 @@ public class InventorySystem : MonoBehaviour
         items.Add(item);
 
         UpdateInventoryUI();
-    }
 
+        item.SetActive(false);
+    }
+    public bool TryPickUp(GameObject item)
+    {
+        if (IsFull())
+        {
+            ShowFullInventoryPopup();
+            return false;
+        }
+
+        items.Add(item);
+        UpdateInventoryUI();
+        return true;
+    }
     public bool HasItem(string itemName)
     {
         foreach (GameObject item in items)
@@ -131,16 +143,7 @@ public class InventorySystem : MonoBehaviour
             }
         }
     }
-    void Awake()
-    {
-        if (instance == null)
-        {
-            instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
+   
+   
+
 }

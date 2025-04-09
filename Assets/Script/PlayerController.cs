@@ -63,6 +63,10 @@ public class PlayerController : MonoBehaviour
         {
             Die();
         }
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
     }
 
     void FixedUpdate()

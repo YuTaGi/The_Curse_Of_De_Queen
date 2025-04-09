@@ -8,13 +8,10 @@ public class Button : MonoBehaviour
     public string SceneName;
     public void OnClickNewGameButton()
     {
-       
+
         PlayerPrefs.DeleteAll();
 
-    
-        PlayerPrefs.SetInt("IsNewGame", 1);
-        PlayerPrefs.Save();
-
+        
         SceneManager.LoadScene(SceneName);
     }
 }

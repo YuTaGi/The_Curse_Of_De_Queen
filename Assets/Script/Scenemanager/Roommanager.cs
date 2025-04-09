@@ -13,6 +13,10 @@ public class Roommanager : MonoBehaviour
     public float popupDuration = 2f;
     public TextMeshProUGUI missingItemText;
 
+    private void Start()
+    {
+        PlayerPrefs.DeleteAll(); 
+    }
     public void SavePlayerPosition()
     {
         GameObject player = GameObject.FindGameObjectWithTag("Player");

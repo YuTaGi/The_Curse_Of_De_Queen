@@ -58,8 +58,9 @@ public class InteractionSystem : MonoBehaviour
     }
     public void PickUpItem(GameObject item)
     {
-       FindObjectOfType<InventorySystem>().PickUp(item);  
+        FindObjectOfType<InventorySystem>().PickUp(item);
     }
+
 
     public void Examine(Item item)
     {

@@ -17,6 +17,8 @@ public class PointerController : MonoBehaviour
     private float direction = 1f;
     private RectTransform pointerTranform;
     private Vector3 targetposition;
+    public static bool hasSucceeded = false;
+
     void Start()
     {
         pointerTranform = GetComponent<RectTransform>();
@@ -50,15 +52,14 @@ public class PointerController : MonoBehaviour
         {
             successCount++; 
             Debug.Log("Success " + successCount + "/" + requiredSuccesses);
-
-            if (successCount >= requiredSuccesses)
-            {
-                SceneManager.LoadScene(sceneName); 
-            }
+            PlayerPrefs.SetInt("MiniGame_Pointer_Success", 1);
+            PlayerPrefs.Save();
+            SceneManager.LoadScene(sceneName);
         }
         else
         {
             SceneManager.LoadScene(sceneName);
         }
+        
     }
 }

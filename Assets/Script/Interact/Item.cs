@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -15,16 +15,7 @@ public class Item : MonoBehaviour
     public string descriptionText;
     public UnityEvent customEvent;
 
-    private void Start()
-    {
-        if (!string.IsNullOrEmpty(itemID) && CollectItem.instance != null)
-        {
-            if (CollectItem.instance.IsCollected(itemID))
-            {
-                gameObject.SetActive(false);
-            }
-        }
-    }
+   
     private void Reset()
     {
         GetComponent<Collider2D>().isTrigger = true;
@@ -43,6 +34,7 @@ public class Item : MonoBehaviour
                     CollectItem.instance.MarkCollected(itemID);
                 }
                 gameObject.SetActive(false);
+               
                 break;
             case InteractionTypr.Examine:
                 FindObjectOfType<InteractionSystem>().Examine(this);
