@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.U2D.Animation;
 using UnityEngine;
@@ -10,11 +10,12 @@ public class CardController : MonoBehaviour
     [SerializeField] Card cardPrefab;
     [SerializeField] Sprite[] sprites;
 
+    public GameObject miniGamePanel;
     private List<Sprite> spritePairs;
     private Card firstSelected;
     private Card secondSelected;
     private int matchedPairs = 0;
-    public string sceneName;
+   
    
 
     private void Start()
@@ -22,6 +23,9 @@ public class CardController : MonoBehaviour
         PrepareSprite();
         CreatCards();
     }
+
+    
+
 
     private void PrepareSprite()
     {
@@ -67,21 +71,48 @@ public class CardController : MonoBehaviour
 
     IEnumerator CheckMatching(Card a, Card b)
     {
-        yield return new WaitForSeconds(0.3f);
+        if (matchedPairs == sprites.Length)
+        {
+            yield return new WaitForSeconds(0.5f);
 
-        if (a.IconSprite == b.IconSprite)
-        {
-            matchedPairs++; 
-            if (matchedPairs == sprites.Length) 
+            // ปิดมินิเกม
+            miniGamePanel.SetActive(false);
+
+            // แจกไอเท็ม
+            string rewardItemName = "Pot"; // หรือเปลี่ยนชื่อ item ที่ต้องการให้
+            GameObject itemPrefab = Resources.Load<GameObject>("Items/" + rewardItemName);
+            if (itemPrefab != null)
             {
-                yield return new WaitForSeconds(0.5f); 
-                SceneManager.LoadScene(sceneName);
+                GameObject player = GameObject.FindGameObjectWithTag("Player");
+                InventorySystem inventory = player.GetComponent<InventorySystem>();
+
+                if (inventory != null)
+                {
+                    GameObject newItem = Instantiate(itemPrefab);
+                    if (inventory.CanPickUp(newItem))
+                    {
+                        FindObjectOfType<InteractionSystem>().PickUpItem(newItem);
+                        Debug.Log("✅ Received item: " + rewardItemName);
+                    }
+                    else
+                    {
+                        Debug.Log("❌ Inventory full!");
+                        Destroy(newItem);
+                    }
+                }
             }
-        }
-        else
-        {
-            a.Hide();
-            b.Hide();
+            else
+            {
+                Debug.LogWarning("⚠️ Could not find item prefab in Resources/Items/: " + rewardItemName);
+            }
+
+            // ทำลาย object หลังมินิเกมสำเร็จ
+            Roommanager roomManager = FindObjectOfType<Roommanager>();
+            if (roomManager != null)
+            {
+                roomManager.DestroyAfterMiniGameWithSound(); 
+            }
+        
         }
     }
 

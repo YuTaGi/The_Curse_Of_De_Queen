@@ -1,48 +1,75 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Events;
-using static UnityEditor.Progress;
 
 [RequireComponent(typeof(BoxCollider2D))]
 public class Item : MonoBehaviour
 {
     public enum InteractionTypr { NONE, PickUp, Examine }
-    public InteractionTypr type;
+    public InteractionTypr InteractType;
 
     public string itemID;
     public string descriptionText;
-    public UnityEvent customEvent;
 
-   
+    public AudioClip pickupSound; // เสียงเก็บไอเท็ม
+    private AudioSource audioSource;
+
+    private void Awake()
+    {
+        // ตรวจสอบว่ามี AudioSource หรือไม่
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
+    }
+
     private void Reset()
     {
         GetComponent<Collider2D>().isTrigger = true;
         gameObject.layer = 10;
     }
-   
 
     public void Interact()
     {
-        switch (type)
+        switch (InteractType)
         {
             case InteractionTypr.PickUp:
-                FindObjectOfType<InteractionSystem>().PickUpItem(gameObject);
-                if (!string.IsNullOrEmpty(itemID))
+                if (!FindObjectOfType<InventorySystem>().CanPickUp(gameObject))
                 {
-                    CollectItem.instance.MarkCollected(itemID);
+                    return;
                 }
-                gameObject.SetActive(false);
-               
+
+             
+                if (pickupSound != null)
+                {
+                    audioSource.PlayOneShot(pickupSound);
+                }
+
+                FindObjectOfType<InteractionSystem>().PickUpItem(gameObject);
+
+              
+                if (GameManager.Instance != null)
+                {
+                    GameManager.Instance.CollectItem();
+                }
+
+                
+                StartCoroutine(DisableAfterSound());
                 break;
+
             case InteractionTypr.Examine:
                 FindObjectOfType<InteractionSystem>().Examine(this);
                 break;
+
             default:
                 break;
         }
-
     }
-    
+
+    private IEnumerator DisableAfterSound()
+    {
+        yield return new WaitForSeconds(pickupSound != null ? pickupSound.length : 0f);
+        gameObject.SetActive(false);
+    }
 }

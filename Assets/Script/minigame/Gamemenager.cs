@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class Gamemenager : MonoBehaviour
 {
-    public string sceneName;
+   
 
     public static Gamemenager Instance;
 
@@ -30,14 +30,7 @@ public class Gamemenager : MonoBehaviour
     {
         currentMatches++;
         score++;
-        if (currentMatches >= totalMatches)
-        {
-           
-            PlayerPrefs.SetInt("MiniGame_Match_Success", 1);
-            PlayerPrefs.Save();
-        }
-        SceneManager.LoadScene(sceneName);
-
+      
        
     }
 }

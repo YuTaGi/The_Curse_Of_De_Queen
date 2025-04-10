@@ -16,7 +16,7 @@ public abstract class Interactable : MonoBehaviour
         {
             Debug.Log("Player entered interactable area.");
 
-           
+
             PlayerController playerController = collision.GetComponent<PlayerController>();
             if (playerController != null)
             {
@@ -36,5 +36,5 @@ public abstract class Interactable : MonoBehaviour
             collision.GetComponent<PlayerController>().CloseInteractableIcon();
         }
     }
- 
+
 }

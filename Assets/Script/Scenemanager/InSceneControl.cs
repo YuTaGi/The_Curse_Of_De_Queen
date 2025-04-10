@@ -56,7 +56,7 @@ public class InSceneControl : MonoBehaviour
         }
         player.transform.position = pos;
 
-        yield return new WaitForSeconds(1);
+       
 
         for (float f = 0; f < 1; f += Time.deltaTime / 0.25f)
         {

@@ -1,13 +1,32 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
+using UnityEditor;
 
-public class MatchCard : MonoBehaviour
+public class MatchCard : MonoBehaviour , IPointerDownHandler, IDragHandler, IDropHandler
 {
-    [SerializeField] private int matchID;
-
-    public int GetId()
+    public Image outline;
+    public string GroupName => transform.parent.name;
+    public void OnDrag(PointerEventData eventData)
     {
-        return matchID;
+        MatchManager.Instance.Dragging();
+    }
+
+    public void OnDrop(PointerEventData eventData) 
+    {
+        MatchManager.Instance.DroppedOnCard(this);
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        MatchManager.Instance.CardPicked(this);
+    }
+    public void Hightlight(bool highlight)
+    {
+        outline.color = highlight ? Color.green : Color.grey;
     }
 }
+
+

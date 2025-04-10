@@ -12,28 +12,29 @@ public class RandomCard : MonoBehaviour
         ShuffleSprites(cardsBottom);
     }
 
+
     void ShuffleSprites(GameObject[] cards)
     {
         int numCards = cards.Length;
-        Sprite[] sprites = new Sprite[numCards];
+        Vector3[] positions = new Vector3[numCards];
 
-      
         for (int i = 0; i < numCards; i++)
         {
-            sprites[i] = cards[i].GetComponent<SpriteRenderer>().sprite;
+            positions[i] = cards[i].transform.position;
         }
 
+      
         for (int i = numCards - 1; i > 0; i--)
         {
             int j = Random.Range(0, i + 1);
-            Sprite temp = sprites[i];
-            sprites[i] = sprites[j];
-            sprites[j] = temp;
+            Vector3 temp = positions[i];
+            positions[i] = positions[j];
+            positions[j] = temp;
         }
 
         for (int i = 0; i < numCards; i++)
         {
-            cards[i].GetComponent<SpriteRenderer>().sprite = sprites[i];
+            cards[i].transform.position = positions[i];
         }
     }
 }
