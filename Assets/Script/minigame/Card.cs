@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,7 +17,15 @@ public class Card : MonoBehaviour
     {
         Cardcontroller.SetSelected(this);
     }
-
+    public Sprite GetIconSprite()
+    {
+        return IconSprite;
+    }
+    public void Disable()
+    {
+        isSelected = true;
+        // อาจใส่ logic ปิด Button หรือ Collider ด้วย
+    }
     public void SetIconSprite(Sprite sp)
     {
         IconSprite = sp;

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -50,6 +51,11 @@ public class PlayerController : MonoBehaviour
         if (Input.GetMouseButtonDown(0) && !isAttacking)
         {
             StartCoroutine(AttackOnce());
+        }
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
 
         if (Input.GetKeyDown(KeyCode.K))
@@ -117,7 +123,7 @@ public class PlayerController : MonoBehaviour
     {
         foreach (GameObject icon in InteractIcon)
         {
-            icon.SetActive(false);  
+            icon.SetActive(false);
         }
     }
 

@@ -15,9 +15,21 @@ public class CardController : MonoBehaviour
     private Card firstSelected;
     private Card secondSelected;
     private int matchedPairs = 0;
-   
-   
+    public GameObject successPopup;
+    public float popupDuration = 2f;
 
+    public Roommanager roomManager;
+
+    public void OnMiniGameSuccess()
+    {
+        Debug.Log("✅ Mini-game complete!");
+
+        // เรียกทำลายออบเจกต์หลังมินิเกม
+        if (roomManager != null)
+        {
+            roomManager.DestroyAfterMiniGameWithSound();
+        }
+    }
     private void Start()
     {
         PrepareSprite();
@@ -71,49 +83,74 @@ public class CardController : MonoBehaviour
 
     IEnumerator CheckMatching(Card a, Card b)
     {
-        if (matchedPairs == sprites.Length)
+        yield return new WaitForSeconds(0.5f);
+
+        if (a.GetIconSprite() == b.GetIconSprite())
         {
-            yield return new WaitForSeconds(0.5f);
+            matchedPairs++;
+            a.Disable(); // ปิดไม่ให้คลิกได้อีก (คุณอาจมี method นี้ใน Card)
+            b.Disable();
 
-            // ปิดมินิเกม
-            miniGamePanel.SetActive(false);
-
-            // แจกไอเท็ม
-            string rewardItemName = "Pot"; // หรือเปลี่ยนชื่อ item ที่ต้องการให้
-            GameObject itemPrefab = Resources.Load<GameObject>("Items/" + rewardItemName);
-            if (itemPrefab != null)
+            // เช็คว่าจบเกมหรือยัง
+            if (matchedPairs == sprites.Length)
             {
-                GameObject player = GameObject.FindGameObjectWithTag("Player");
-                InventorySystem inventory = player.GetComponent<InventorySystem>();
+                yield return new WaitForSeconds(0.5f);
+                miniGamePanel.SetActive(false);
 
-                if (inventory != null)
+                // แจกไอเท็ม
+                string rewardItemName = "Pot";
+                GameObject itemPrefab = Resources.Load<GameObject>("Items/" + rewardItemName);
+                if (itemPrefab != null)
                 {
-                    GameObject newItem = Instantiate(itemPrefab);
-                    if (inventory.CanPickUp(newItem))
+                    GameObject player = GameObject.FindGameObjectWithTag("Player");
+                    InventorySystem inventory = player.GetComponent<InventorySystem>();
+
+                    if (inventory != null)
                     {
-                        FindObjectOfType<InteractionSystem>().PickUpItem(newItem);
-                        Debug.Log("✅ Received item: " + rewardItemName);
-                    }
-                    else
-                    {
-                        Debug.Log("❌ Inventory full!");
-                        Destroy(newItem);
+                        GameObject newItem = Instantiate(itemPrefab);
+                        if (inventory.CanPickUp(newItem))
+                        {
+                            FindObjectOfType<InteractionSystem>().PickUpItem(newItem);
+                            Debug.Log("✅ Received item: " + rewardItemName);
+                        }
+                        else
+                        {
+                            Debug.Log("❌ Inventory full!");
+                            Destroy(newItem);
+                        }
                     }
                 }
-            }
-            else
-            {
-                Debug.LogWarning("⚠️ Could not find item prefab in Resources/Items/: " + rewardItemName);
-            }
+                else
+                {
+                    Debug.LogWarning("⚠️ Could not find item prefab in Resources/Items/: " + rewardItemName);
+                }
 
-            // ทำลาย object หลังมินิเกมสำเร็จ
-            Roommanager roomManager = FindObjectOfType<Roommanager>();
-            if (roomManager != null)
-            {
-                roomManager.DestroyAfterMiniGameWithSound(); 
+                Roommanager roomManager = FindObjectOfType<Roommanager>();
+                if (roomManager != null)
+                {
+                    roomManager.DestroyAfterMiniGameWithSound();
+                }
             }
-        
         }
+        else
+        {
+            a.Hide(); // กลับการ์ด
+            b.Hide();
+        }
+    }
+    void ShowSuccessPopup()
+    {
+        if (successPopup != null)
+        {
+            successPopup.SetActive(true);
+            CancelInvoke(nameof(HideSuccessPopup));
+            Invoke(nameof(HideSuccessPopup), popupDuration);
+        }
+    }
+
+    void HideSuccessPopup()
+    {
+        successPopup.SetActive(false);
     }
 
     void ShuffleSprites(List<Sprite> spriteList)

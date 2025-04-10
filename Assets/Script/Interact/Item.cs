@@ -37,6 +37,7 @@ public class Item : MonoBehaviour
             case InteractionTypr.PickUp:
                 if (!FindObjectOfType<InventorySystem>().CanPickUp(gameObject))
                 {
+                    InventorySystem.instance.ShowFullInventoryPopup();
                     return;
                 }
 

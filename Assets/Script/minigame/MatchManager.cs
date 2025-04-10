@@ -11,12 +11,26 @@ public class MatchManager : MonoBehaviour
 
     [SerializeField] LineRenderer draggingline;
     MatchCard draggingcard;
-
-
+    [SerializeField] List<MatchCard> allCards;
+    public GameObject successPopup;
+    [SerializeField] List<Transform> gridSlots;
+    public float popupDuration = 2f;
     public int Paircout = 4;
     LineRenderer[] lines;
 
     List<Connection> connectedPairs = new List<Connection>();
+    public Roommanager roomManager;
+
+    public void OnMiniGameSuccess()
+    {
+        Debug.Log("✅ Mini-game complete!");
+
+        // เรียกทำลายออบเจกต์หลังมินิเกม
+        if (roomManager != null)
+        {
+            roomManager.DestroyAfterMiniGameWithSound();
+        }
+    }
     private void Awake()
     {
         Instance = this;
@@ -25,214 +39,249 @@ public class MatchManager : MonoBehaviour
     private void Start()
     {
         GenerateLines();
+        ShuffleCards();
+        
     }
-
-    private void Update()
+    void ShuffleCards()
     {
-        if(Input.GetMouseButtonDown(0))
+        if (allCards.Count > gridSlots.Count)
         {
-            if(draggingcard != null || draggingline.enabled)
+            Debug.LogError("Not enough grid slots for all cards!");
+            return;
+        }
+
+        // Copy slot list แล้ว shuffle
+        List<Transform> availableSlots = new List<Transform>(gridSlots);
+        for (int i = 0; i < allCards.Count; i++)
+        {
+            int randIndex = Random.Range(0, availableSlots.Count);
+            Transform slot = availableSlots[randIndex];
+
+            allCards[i].transform.position = slot.position;
+            availableSlots.RemoveAt(randIndex);
+        }
+    }
+        private void Update()
+        {
+            if (Input.GetMouseButtonDown(0))
             {
-                draggingcard.Hightlight(false);
-                draggingcard = null;
+                if (draggingcard != null || draggingline.enabled)
+                {
+                    draggingcard.Hightlight(false);
+                    draggingcard = null;
+                    draggingline.enabled = false;
+                }
+            }
+        }
+
+        void GenerateLines()
+        {
+            lines = new LineRenderer[Paircout];
+            for (int i = 0; i < Paircout; i++)
+            {
+                var line = Instantiate(linePrefab, linecontainer);
+                line.enabled = false;
+                lines[i] = line;
+            }
+        }
+        LineRenderer GetLineFromPool()
+        {
+            foreach (LineRenderer line in lines)
+            {
+                if (line.enabled == false)
+                {
+                    return line;
+                }
+            }
+            return null;
+        }
+        public void CardPicked(MatchCard card)
+        {
+            RemoveConnectionAlready(card);
+            draggingcard = card;
+            draggingcard.Hightlight(true);
+
+            Vector2 cardPos = card.transform.position;
+            draggingline.SetPosition(0, cardPos);
+            draggingline.SetPosition(1, cardPos);
+
+            if (draggingline.enabled == false)
+            {
+                draggingline.enabled = true;
+            }
+        }
+
+        public void Dragging()
+        {
+            Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            draggingline.SetPosition(1, pos);
+        }
+        public void DroppedOnCard(MatchCard card)
+        {
+            if (draggingcard == null || card == null)
+            {
+                Debug.LogWarning("DroppedOnCard called, but draggingcard or target card is null.");
+                return;
+            }
+
+            if (draggingcard.GroupName == card.GroupName)
+            {
+                return;
+            }
+
+            RemoveConnectionAlready(card);
+
+            if (draggingline.enabled == true)
+            {
                 draggingline.enabled = false;
             }
-        }
-    }
 
-    void GenerateLines()
-    {
-        lines = new LineRenderer[Paircout];
-        for (int i = 0; i < Paircout; i++)
-        {
-            var line = Instantiate(linePrefab, linecontainer);
-            line.enabled = false;
-            lines[i] = line;
+            Connection connection = new Connection(draggingcard, card, GetLineFromPool());
+            connectedPairs.Add(connection);
+            draggingcard = null;
+
+            ValidatePairs();
         }
-    }
-    LineRenderer GetLineFromPool()
-    {
-        foreach (LineRenderer line in lines)
+        void RemoveConnectionAlready(MatchCard card)
         {
-            if (line.enabled == false)
+            foreach (Connection connection in connectedPairs)
             {
-                return line;
-            }
-        }
-        return null;
-    }
-    public void CardPicked(MatchCard card)
-    {
-        RemoveConnectionAlready(card);
-        draggingcard = card;
-        draggingcard.Hightlight(true);
-
-        Vector2 cardPos = card.transform.position;
-        draggingline.SetPosition(0, cardPos);
-        draggingline.SetPosition(1, cardPos);
-
-        if(draggingline.enabled == false)
-        {
-            draggingline.enabled = true;
-        }
-    }
-
-    public void Dragging()
-    {
-        Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        draggingline.SetPosition(1, pos);
-    }
-    public void DroppedOnCard(MatchCard card)
-    {
-        if (draggingcard == null || card == null)
-        {
-            Debug.LogWarning("DroppedOnCard called, but draggingcard or target card is null.");
-            return;
-        }
-
-        if (draggingcard.GroupName == card.GroupName)
-        {
-            return;
-        }
-
-        RemoveConnectionAlready(card);
-
-        if (draggingline.enabled == true)
-        {
-            draggingline.enabled = false;
-        }
-
-        Connection connection = new Connection(draggingcard, card, GetLineFromPool());
-        connectedPairs.Add(connection);
-        draggingcard = null;
-
-        ValidatePairs();
-    }
-    void RemoveConnectionAlready(MatchCard card)
-    {
-        foreach (Connection connection in connectedPairs)
-        {
-            if (connection.A == card || connection.B == card)
-            {
-                connection.A.Hightlight(false);
-                connection.B.Hightlight(false);
-
-                connection.connectedWith.enabled = false;
-                connection.connectedWith = null;
-                connection.A = null;
-                connection.B = null;
-
-                connectedPairs.Remove(connection);
-                break;
-            }
-           
-        }
-    }
-
-    void ValidatePairs()
-    {
-        if (connectedPairs.Count >= Paircout)
-        {
-            bool allRight = true;
-            foreach (var pair in connectedPairs)
-            {
-                if (pair.A.name != pair.B.name)
+                if (connection.A == card || connection.B == card)
                 {
-                    allRight = false;
-                    pair.connectedWith.startColor = Color.red;
-                    pair.connectedWith.endColor = Color.red;
+                    connection.A.Hightlight(false);
+                    connection.B.Hightlight(false);
+
+                    connection.connectedWith.enabled = false;
+                    connection.connectedWith = null;
+                    connection.A = null;
+                    connection.B = null;
+
+                    connectedPairs.Remove(connection);
+                    break;
                 }
-                else
-                {
-                    pair.connectedWith.startColor = Color.green;
-                    pair.connectedWith.endColor = Color.green;
-                }
+
             }
+        }
 
-            if (allRight)
+        void ValidatePairs()
+        {
+            if (connectedPairs.Count >= Paircout)
             {
-                Debug.Log("✅ All pairs matched correctly!");
-
-                // 🎁 แจกไอเท็มหลังชนะ
-                string rewardItemName = "Pot";
-                GameObject itemPrefab = Resources.Load<GameObject>("Items/" + rewardItemName);
-                if (itemPrefab != null)
+                bool allRight = true;
+                foreach (var pair in connectedPairs)
                 {
-                    GameObject player = GameObject.FindGameObjectWithTag("Player");
-                    InventorySystem inventory = player.GetComponent<InventorySystem>();
-
-                    if (inventory != null)
+                    if (pair.A.name != pair.B.name)
                     {
-                        GameObject newItem = Instantiate(itemPrefab);
-                        if (inventory.CanPickUp(newItem))
+                        allRight = false;
+                        pair.connectedWith.startColor = Color.red;
+                        pair.connectedWith.endColor = Color.red;
+                    }
+                    else
+                    {
+                        pair.connectedWith.startColor = Color.green;
+                        pair.connectedWith.endColor = Color.green;
+                    }
+                }
+
+                if (allRight)
+                {
+                    Debug.Log("✅ All pairs matched correctly!");
+
+                    // 🎁 แจกไอเท็มหลังชนะ
+                    string rewardItemName = "Pot";
+                    GameObject itemPrefab = Resources.Load<GameObject>("Items/" + rewardItemName);
+                    if (itemPrefab != null)
+                    {
+                        GameObject player = GameObject.FindGameObjectWithTag("Player");
+                        InventorySystem inventory = player.GetComponent<InventorySystem>();
+
+                        if (inventory != null)
                         {
-                            FindObjectOfType<InteractionSystem>().PickUpItem(newItem);
-                            Debug.Log("🎁 Rewarded item: " + rewardItemName);
+                            GameObject newItem = Instantiate(itemPrefab);
+                            if (inventory.CanPickUp(newItem))
+                            {
+                                FindObjectOfType<InteractionSystem>().PickUpItem(newItem);
+                                Debug.Log("🎁 Rewarded item: " + rewardItemName);
+                            }
+                            else
+                            {
+                                Debug.Log("❌ Inventory full!");
+                                Destroy(newItem);
+                            }
                         }
                         else
                         {
-                            Debug.Log("❌ Inventory full!");
-                            Destroy(newItem);
+                            Debug.LogWarning("⚠️ InventorySystem not found on Player.");
                         }
                     }
                     else
                     {
-                        Debug.LogWarning("⚠️ InventorySystem not found on Player.");
-                    }
-                }
-                else
-                {
-                    Debug.LogWarning("⚠️ Could not find item prefab: " + rewardItemName);
-                }
-
-                // 🔥 ทำลายวัตถุ
-                Roommanager roomManager = FindObjectOfType<Roommanager>();
-                if (roomManager != null)
-                {
-                    roomManager.DestroyAfterMiniGameWithSound();
-
-                    // ✅ ปิด Matching Canvas
-                    if (roomManager.canvasToOpen != null)
-                    {
-                        Debug.Log("Closing Matching Canvas...");
-                        roomManager.canvasToOpen.SetActive(false);
+                        Debug.LogWarning("⚠️ Could not find item prefab: " + rewardItemName);
                     }
 
-                    // ✅ เปิด Canvas ปกติกลับขึ้นมา (ถ้ามี)
-                    if (roomManager.canvasToClose != null)
+                    // 🔥 ทำลายวัตถุ
+                    Roommanager roomManager = FindObjectOfType<Roommanager>();
+                    if (roomManager != null)
                     {
-                        Debug.Log("Reopening main canvas...");
-                        roomManager.canvasToClose.SetActive(true);
+                        roomManager.DestroyAfterMiniGameWithSound();
+
+                        // ✅ ปิด Matching Canvas
+                        if (roomManager.canvasToOpen != null)
+                        {
+                            Debug.Log("Closing Matching Canvas...");
+                            roomManager.canvasToOpen.SetActive(false);
+                        }
+
+                        // ✅ เปิด Canvas ปกติกลับขึ้นมา (ถ้ามี)
+                        if (roomManager.canvasToClose != null)
+                        {
+                            Debug.Log("Reopening main canvas...");
+                            roomManager.canvasToClose.SetActive(true);
+                        }
                     }
                 }
             }
         }
-    }
+        void ShowSuccessPopup()
+        {
+            if (successPopup != null)
+            {
+                successPopup.SetActive(true);
+                CancelInvoke(nameof(HideSuccessPopup));
+                Invoke(nameof(HideSuccessPopup), popupDuration);
+            }
+        }
+
+        void HideSuccessPopup()
+        {
+            successPopup.SetActive(false);
+        }
 
         public void OnDestroy()
-    {
-        Instance = null;
+        {
+            Instance = null;
+        }
     }
-}
-public class Connection
-{
-    public MatchCard A;
-    public MatchCard B;
-    public LineRenderer connectedWith;
-    public Connection(MatchCard A, MatchCard B, LineRenderer connectedWith)
+    public class Connection
     {
-        this.A = A;
-        this.B = B;
-        this.connectedWith = connectedWith;
+        public MatchCard A;
+        public MatchCard B;
+        public LineRenderer connectedWith;
+        public Connection(MatchCard A, MatchCard B, LineRenderer connectedWith)
+        {
+            this.A = A;
+            this.B = B;
+            this.connectedWith = connectedWith;
 
-        Vector2 CardAPos = A.transform.position;
-        Vector2 CardBPos = B.transform.position;
+            Vector2 CardAPos = A.transform.position;
+            Vector2 CardBPos = B.transform.position;
 
-        A.Hightlight(true);
-        B.Hightlight(true);
+            A.Hightlight(true);
+            B.Hightlight(true);
 
-        connectedWith.SetPosition(0, CardAPos);
-        connectedWith.SetPosition(1, CardBPos);
-        connectedWith.enabled = true;
+            connectedWith.SetPosition(0, CardAPos);
+            connectedWith.SetPosition(1, CardBPos);
+            connectedWith.enabled = true;
+        }
     }
-}
+

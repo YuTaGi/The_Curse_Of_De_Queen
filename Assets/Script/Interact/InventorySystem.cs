@@ -85,6 +85,12 @@ public class InventorySystem : MonoBehaviour
         {
             ToggleInventory();
         }
+
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            Debug.Log("🧪 เรียก Popup ทดสอบ");
+            ShowFullInventoryPopup();
+        }
     }
 
     void ToggleInventory()
@@ -104,6 +110,8 @@ public class InventorySystem : MonoBehaviour
             return;
         }
 
+        Sprite itemSprite = itemToAddPrefab.GetComponent<SpriteRenderer>()?.sprite;
+
         // Check if already exists in inventory
         foreach (var invItem in items)
         {
@@ -111,6 +119,9 @@ public class InventorySystem : MonoBehaviour
             {
                 invItem.quantity++;
                 UpdateInventoryUI();
+
+                // ✅ Show popup for stacked item
+                ShowItemReceivedPopup(itemName, itemSprite);
                 return;
             }
         }
@@ -125,6 +136,9 @@ public class InventorySystem : MonoBehaviour
         InventoryItem newItem = new InventoryItem(itemToAddPrefab);
         items.Add(newItem);
         UpdateInventoryUI();
+
+        // ✅ Show popup for new item
+        ShowItemReceivedPopup(itemName, itemSprite);
     }
 
     public void PickUp(GameObject item)
@@ -227,8 +241,13 @@ public class InventorySystem : MonoBehaviour
 
     public void ShowFullInventoryPopup()
     {
-        if (fullInventoryPopup == null) return;
+        Debug.Log("showFullInventoryPopup!");
 
+        if (fullInventoryPopup == null)
+        {
+            Debug.LogWarning("❗ fullInventoryPopup no!");
+            return;
+        }
         fullInventoryPopup.SetActive(true);
         CancelInvoke(nameof(HideFullInventoryPopup));
         Invoke(nameof(HideFullInventoryPopup), popupDuration);

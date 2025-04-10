@@ -28,7 +28,18 @@ public class PointerController : MonoBehaviour
     public string rewardItem = "Pot";
     public static string LastReward = null;
     public static bool hasSucceeded = false;
+    public Roommanager roomManager;
 
+    public void OnMiniGameSuccess()
+    {
+        Debug.Log("✅ Mini-game complete!");
+
+        // เรียกทำลายออบเจกต์หลังมินิเกม
+        if (roomManager != null)
+        {
+            roomManager.DestroyAfterMiniGameWithSound();
+        }
+    }
     void Start()
     {
         pointerTranform = GetComponent<RectTransform>();
@@ -85,7 +96,7 @@ public class PointerController : MonoBehaviour
         if (RectTransformUtility.RectangleContainsScreenPoint(Safexone, pointerTranform.position, null))
         {
             successCount++;
-            Debug.Log("Success " + successCount + "/" + requiredSuccesses);
+            Debug.Log("✅ Success " + successCount + "/" + requiredSuccesses);
             UpdateStatusText();
             LastReward = rewardItem;
 
@@ -96,6 +107,13 @@ public class PointerController : MonoBehaviour
                 ShowSuccessPopup();
                 StartCoroutine(WaitAndContinue());
             }
+        }
+        else
+        {
+            // พลาด รีเซ็ตใหม่
+            successCount = 0;
+            Debug.Log("❌ Missed! Reset to 0.");
+            UpdateStatusText();
         }
     }
 
@@ -135,10 +153,13 @@ public class PointerController : MonoBehaviour
         }
 
         // 🎯 ทำลายวัตถุผ่าน Roommanager
-        Roommanager roomManager = FindObjectOfType<Roommanager>();
         if (roomManager != null)
         {
-            roomManager.DestroyAfterMiniGameWithSound(); 
+            roomManager.DestroyAfterMiniGameWithSound();
+        }
+        else
+        {
+            Debug.LogWarning("⚠️ roomManager ไม่ถูกตั้งค่าใน Inspector!");
         }
     }
 

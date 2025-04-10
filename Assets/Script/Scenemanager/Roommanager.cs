@@ -12,8 +12,6 @@ public class Roommanager : MonoBehaviour
     public float popupDuration = 2f;
     public TextMeshProUGUI missingItemText;
 
-    public CardController cardController;
-
     public GameObject objectToDestroyAfterMiniGame;
     public AudioClip destroySound;
     public AudioSource audioSource;
@@ -81,14 +79,18 @@ public class Roommanager : MonoBehaviour
 
     public void DestroyAfterMiniGameWithSound()
     {
+        Debug.Log("Trying to destroy: " + objectToDestroyAfterMiniGame?.name);
+
         if (objectToDestroyAfterMiniGame != null)
         {
-            StartCoroutine(DelayedDestroy(objectToDestroyAfterMiniGame, 1.5f, destroySound));
+            Destroy(objectToDestroyAfterMiniGame); // ทดสอบแบบไม่ใช้ coroutine
         }
     }
 
     private IEnumerator DelayedDestroy(GameObject target, float delay, AudioClip sound)
     {
+        Debug.Log("Will destroy: " + target.name);
+
         if (sound != null && audioSource != null)
         {
             audioSource.PlayOneShot(sound);
@@ -97,6 +99,7 @@ public class Roommanager : MonoBehaviour
         yield return new WaitForSeconds(delay);
 
         Destroy(target);
+        Debug.Log("Destroyed: " + target.name);
     }
 
     IEnumerator HandleTransition()
