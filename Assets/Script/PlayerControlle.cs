@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
@@ -8,7 +9,7 @@ public class PlayerController : MonoBehaviour
     public Animator animator;
     public SpriteRenderer spriteRenderer;
 
-    public float attackRange = 1f; 
+    public float attackRange = 1f;
     public LayerMask enemyLayer;
     public GameObject[] InteractIcon;
 
@@ -33,16 +34,23 @@ public class PlayerController : MonoBehaviour
     {
         if (isDying) return;
 
-        float moveInput = Input.GetAxisRaw("Horizontal");
-        movement = new Vector2(moveInput, 0f);
-
-        animator.SetBool("IsMoving", moveInput != 0);
-
-       
-        if (moveInput != 0)
+        if (!isAttacking)
         {
-            spriteRenderer.flipX = moveInput > 0;
+            float moveInput = Input.GetAxisRaw("Horizontal");
+            movement = new Vector2(moveInput, 0f);
+            animator.SetBool("IsMoving", moveInput != 0);
+
+            if (moveInput != 0)
+            {
+                spriteRenderer.flipX = moveInput > 0;
+            }
         }
+        else
+        {
+            movement = Vector2.zero;
+            animator.SetBool("IsMoving", false);
+        }
+
         if (Input.GetKeyDown(KeyCode.E))
         {
             CheckInteraction();
@@ -89,7 +97,7 @@ public class PlayerController : MonoBehaviour
             audioSource.PlayOneShot(attackSound);
         }
 
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(2.5f);
 
         Vector2 direction = spriteRenderer.flipX ? Vector2.left : Vector2.right;
         Vector2 attackCenter = (Vector2)transform.position + direction * 0.7f;
@@ -115,7 +123,7 @@ public class PlayerController : MonoBehaviour
     {
         foreach (GameObject icon in InteractIcon)
         {
-            icon.SetActive(true); 
+            icon.SetActive(true);
         }
     }
 
@@ -149,9 +157,10 @@ public class PlayerController : MonoBehaviour
             isDying = true;
             animator.SetBool("IsDying", true);
             rb.velocity = Vector2.zero;
-            Destroy(gameObject, 2f);
+            StartCoroutine(LoadSceneAfterDeath("BadEnd", 2f));
         }
     }
+
     public void LoadPlayerPosition()
     {
         float x = PlayerPrefs.GetFloat("PlayerPosX", transform.position.x);
@@ -174,5 +183,11 @@ public class PlayerController : MonoBehaviour
 
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(attackCenter, attackRange);
+    }
+
+    private IEnumerator LoadSceneAfterDeath(string sceneName, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        SceneManager.LoadScene(sceneName);
     }
 }
