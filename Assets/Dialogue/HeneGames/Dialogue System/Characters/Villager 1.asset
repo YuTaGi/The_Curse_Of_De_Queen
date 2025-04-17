@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9f4a308dae7ffd048a8b0eb8d5ae4a02, type: 3}
-  m_Name: Tutorial
+  m_Name: Villager 1
   m_EditorClassIdentifier: 
-  characterPhoto: {fileID: 7482667652216324306, guid: f02e43f2df3bced4ca2d3dadd97d0bb9, type: 3}
-  characterName: Tutorial
+  characterPhoto: {fileID: 21300000, guid: 69747d0c35a638a479843c43ee1dbac1, type: 3}
+  characterName: Pop

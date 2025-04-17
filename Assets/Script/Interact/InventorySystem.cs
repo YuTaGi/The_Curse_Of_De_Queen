@@ -112,21 +112,21 @@ public class InventorySystem : MonoBehaviour
 
         Sprite itemSprite = itemToAddPrefab.GetComponent<SpriteRenderer>()?.sprite;
 
-        // Check if already exists in inventory
         foreach (var invItem in items)
         {
             if (invItem.itemPrefab.name == itemToAddPrefab.name)
             {
                 invItem.quantity++;
                 UpdateInventoryUI();
-
-                // ✅ Show popup for stacked item
                 ShowItemReceivedPopup(itemName, itemSprite);
+
+                // ✅ แจ้ง GameManager ว่าเราเก็บไอเท็มนี้แล้ว
+                Gamemanager.Instance?.CollectItem(itemName);
+
                 return;
             }
         }
 
-        // If not exists, add new
         if (IsFull())
         {
             ShowFullInventoryPopup();
@@ -136,14 +136,15 @@ public class InventorySystem : MonoBehaviour
         InventoryItem newItem = new InventoryItem(itemToAddPrefab);
         items.Add(newItem);
         UpdateInventoryUI();
-
-        // ✅ Show popup for new item
         ShowItemReceivedPopup(itemName, itemSprite);
+
+        // ✅ แจ้ง GameManager
+        Gamemanager.Instance?.CollectItem(itemName);
     }
 
     public void PickUp(GameObject item)
     {
-        string itemName = item.name.Replace("(Clone)", "");
+        string itemName = item.GetComponent<Item>().itemID;
         AddItem(itemName);
         //item.SetActive(false);
     }

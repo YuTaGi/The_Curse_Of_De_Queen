@@ -18,6 +18,9 @@ public class CardController : MonoBehaviour
     public GameObject successPopup;
     public float popupDuration = 2f;
 
+    public PlayerHealth Health;
+    public float damagePerMismatch = 10f;
+
     public Roommanager roomManager;
 
     public void OnMiniGameSuccess()
@@ -136,6 +139,11 @@ public class CardController : MonoBehaviour
         {
             a.Hide(); // กลับการ์ด
             b.Hide();
+
+            if (Health != null)
+            {
+                Health.TakeDamage(damagePerMismatch); // 💥 ลดเลือดเมื่อจับผิด
+            }
         }
     }
     void ShowSuccessPopup()

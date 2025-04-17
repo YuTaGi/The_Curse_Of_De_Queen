@@ -16,7 +16,7 @@ public class Item : MonoBehaviour
 
     private void Awake()
     {
-        // ตรวจสอบว่ามี AudioSource หรือไม่
+       
         audioSource = GetComponent<AudioSource>();
         if (audioSource == null)
         {
@@ -49,13 +49,13 @@ public class Item : MonoBehaviour
 
                 FindObjectOfType<InteractionSystem>().PickUpItem(gameObject);
 
-              
-                if (GameManager.Instance != null)
+
+                if (Gamemanager.Instance != null)
                 {
-                    GameManager.Instance.CollectItem();
+                    Gamemanager.Instance.CollectItem(itemID);
                 }
 
-                
+
                 StartCoroutine(DisableAfterSound());
                 break;
 

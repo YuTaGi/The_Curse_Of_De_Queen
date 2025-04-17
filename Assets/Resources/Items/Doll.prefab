@@ -146,7 +146,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   InteractType: 1
-  itemID: Munk1
+  itemID: Doll
   descriptionText: Litlle doll to play with.
   pickupSound: {fileID: 8300000, guid: 27cbe3edb6d50fd4e959d38496a1e07e, type: 3}
 --- !u!82 &4206274555795798366

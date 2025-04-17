@@ -1,13 +1,14 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class Gamemanager : MonoBehaviour
 {
-    public static GameManager Instance;
+    public static Gamemanager Instance;
 
-    public int totalRequiredItems = 3;
-    private int currentItemCount = 0;
+    public string requiredItem = "Pot";
+    public int totalRequiredItems = 8;
+    public int currentItemCount = 0;
 
     private void Awake()
     {
@@ -21,15 +22,42 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
-    public void CollectItem()
+    private void Update()
     {
-        currentItemCount++;
-        Debug.Log("Collected: " + currentItemCount + "/" + totalRequiredItems);
+        
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            for (int i = 0; i < totalRequiredItems; i++)
+            {
+                CollectItem(requiredItem);
+            }
+
+            Debug.Log("Debug: Added " + totalRequiredItems + " items (" + requiredItem + ")");
+        }
+    }
+    public void CollectItem(string id)
+    {
+        if (id == requiredItem)
+        {
+            currentItemCount++;
+
+            Debug.Log("Collected item count: " + currentItemCount);
+
+            if (currentItemCount >= totalRequiredItems)
+            {
+                Debug.Log("✅ All items collected! Transition to next scene...");
+                // เรียกฟังก์ชันเปลี่ยนฉากหรือลูปจบตรงนี้
+            }
+        }
+        else
+        {
+            Debug.Log("Collected non-required item: " + id);
+        }
     }
 
     public bool HasCollectedAllItems()
     {
+        Debug.Log("Check collected items: " + currentItemCount + "/" + totalRequiredItems);
         return currentItemCount >= totalRequiredItems;
     }
 }

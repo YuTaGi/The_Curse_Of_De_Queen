@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -11,13 +11,18 @@ public class ExitTrigger : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            if (GameManager.Instance.HasCollectedAllItems())
+            Debug.Log("Player touched the exit trigger.");
+
+            if (Gamemanager.Instance.HasCollectedAllItems())
             {
+                Debug.Log(" Enough items, loading scene...");
                 SceneManager.LoadScene(endSceneName);
             }
             else
             {
-                Debug.Log("Item not enough!");
+                Debug.Log(" Not enough items!");
+                Debug.Log("Current Count: " + Gamemanager.Instance.currentItemCount);
+                Debug.Log("Required: " + Gamemanager.Instance.totalRequiredItems);
             }
         }
     }

@@ -25,6 +25,9 @@ public class PointerController : MonoBehaviour
     public GameObject successPopup;
     public float popupDuration = 2f;
 
+    public PlayerHealth Health;
+    public float damagePerMismatch = 10f;
+
     public string rewardItem = "Pot";
     public static string LastReward = null;
     public static bool hasSucceeded = false;
@@ -113,12 +116,17 @@ public class PointerController : MonoBehaviour
             // พลาด รีเซ็ตใหม่
             successCount = 0;
             Debug.Log("❌ Missed! Reset to 0.");
+            if (Health != null)
+            {
+                Health.TakeDamage(damagePerMismatch); // 💥 ลดเลือดเมื่อจับผิด
+            }
             UpdateStatusText();
         }
     }
 
     void GiveReward()
     {
+        Debug.Log(" Trying to give reward: " + rewardItem);
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
         {
