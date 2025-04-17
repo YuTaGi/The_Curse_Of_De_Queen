@@ -5820,6 +5820,10 @@ PrefabInstance:
       propertyPath: miniGamePanel
       value: 
       objectReference: {fileID: 232549408}
+    - target: {fileID: 7398664113954099375, guid: 5453918d617326745a6561e33eb07354, type: 3}
+      propertyPath: damagePerMismatch
+      value: 15
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -7810,7 +7814,7 @@ PrefabInstance:
       objectReference: {fileID: 1819059901}
     - target: {fileID: 1289830418210584544, guid: 22e0dd237128add4087e9cbacd483933, type: 3}
       propertyPath: damagePerMismatch
-      value: 10
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 1289830418210584544, guid: 22e0dd237128add4087e9cbacd483933, type: 3}
       propertyPath: gameCanvasToClose
@@ -8304,7 +8308,7 @@ PrefabInstance:
       objectReference: {fileID: 984801864}
     - target: {fileID: 1289830418210584544, guid: 22e0dd237128add4087e9cbacd483933, type: 3}
       propertyPath: damagePerMismatch
-      value: 10
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 1289830418210584544, guid: 22e0dd237128add4087e9cbacd483933, type: 3}
       propertyPath: gameCanvasToClose
@@ -10459,6 +10463,10 @@ PrefabInstance:
       propertyPath: miniGamePanel
       value: 
       objectReference: {fileID: 544019874}
+    - target: {fileID: 7398664113954099375, guid: 5453918d617326745a6561e33eb07354, type: 3}
+      propertyPath: damagePerMismatch
+      value: 15
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -13700,7 +13708,7 @@ PrefabInstance:
       objectReference: {fileID: 367547685}
     - target: {fileID: 1289830418210584544, guid: 22e0dd237128add4087e9cbacd483933, type: 3}
       propertyPath: damagePerMismatch
-      value: 10
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 1289830418210584544, guid: 22e0dd237128add4087e9cbacd483933, type: 3}
       propertyPath: gameCanvasToClose
@@ -16127,6 +16135,10 @@ PrefabInstance:
       propertyPath: miniGamePanel
       value: 
       objectReference: {fileID: 1060865401}
+    - target: {fileID: 7398664113954099375, guid: 5453918d617326745a6561e33eb07354, type: 3}
+      propertyPath: damagePerMismatch
+      value: 15
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -19518,6 +19530,10 @@ PrefabInstance:
       propertyPath: miniGamePanel
       value: 
       objectReference: {fileID: 1118014055}
+    - target: {fileID: 7398664113954099375, guid: 5453918d617326745a6561e33eb07354, type: 3}
+      propertyPath: damagePerMismatch
+      value: 15
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
